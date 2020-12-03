@@ -1,6 +1,7 @@
 #!/bin/sh
-height="$(wc -l < 03-input)"
-width="$(head -1 < 03-input | tr -d '\n' | wc -c)"
+inputfile="$1"
+height="$(wc -l < "$inputfile")"
+width="$(head -1 < "$inputfile" | tr -d '\n' | wc -c)"
 
 count() {
 	xskip="$1"
@@ -11,7 +12,7 @@ count() {
 		head -c 1
 		head -1 > /dev/null
 		for _ in $(seq "$(( yskip - 1 ))"); do head -1 > /dev/null; done
-	done < 03-input | tr -d '.' | wc -c
+	done < "$inputfile" | tr -d '.' | wc -c
 }
 
 echo "$(( $(count 1 1) * $(count 3 1) * $(count 5 1) * $(count 7 1) * $(count 1 2) ))"

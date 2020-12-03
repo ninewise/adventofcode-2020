@@ -7,4 +7,4 @@ while read range letter password || [ ! -z "$range" ]; do
 	if [ "$atleast" -le "${#filtered}" -a "${#filtered}" -le "$atmost" ]; then
 		printf "%d-%d %s: %s\n" "$atleast" "$atmost" "$letter" "$password"
 	fi
-done < 02-input | wc -l
+done < "$1" | wc -l
