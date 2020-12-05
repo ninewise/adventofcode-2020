@@ -13,6 +13,11 @@ bin2dec() {
 	}
 }
 
+# using bc
+bin2dec() {
+	{ echo "ibase=2" && cat; } | bc
+}
+
 tr 'BFRL' '1010' < "$1" | sort | bin2dec | {
 	read prev
 	while read n; do
