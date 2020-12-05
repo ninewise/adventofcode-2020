@@ -11,4 +11,4 @@ bin2dec() {
 	echo "$n"
 }
 
-tr 'BFRL' '1010' < "$1" | sort | tail -1 | bin2dec
+tr 'BFRL' '1010' < "$3" | sort | tail -1 | bin2dec

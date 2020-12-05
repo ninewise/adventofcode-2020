@@ -1,5 +1,6 @@
 import           Data.Char (isLower)
 import           Parser
+import           System.Environment (getArgs)
 
 data Desc = Desc Int Int Char String
 
@@ -10,7 +11,9 @@ password = Desc <$> (nat <* token '-')
                 <*> (star (spot isLower) <* star (token '\n'))
 
 main :: IO ()
-main = print . length . filter check1 . parse' (star password) =<< readFile "02-input"
+main = do [_, part, file] <- getArgs
+          let check = if part == "1" then check1 else check2
+          print . length . filter check . parse' (star password) =<< readFile file
 
 check1 :: Desc -> Bool
 check1 (Desc f s l p) = let n = length $ filter (== l) p

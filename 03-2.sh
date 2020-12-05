@@ -1,5 +1,5 @@
 #!/bin/sh
-inputfile="$1"
+inputfile="$3"
 height="$(wc -l < "$inputfile")"
 width="$(head -1 < "$inputfile" | tr -d '\n' | wc -c)"
 

@@ -18,7 +18,7 @@ bin2dec() {
 	{ echo "ibase=2" && cat; } | bc
 }
 
-tr 'BFRL' '1010' < "$1" | sort | bin2dec | {
+tr 'BFRL' '1010' < "$3" | sort | bin2dec | {
 	read prev
 	while read n; do
 		if [ "$(( n - prev ))" = 2 ]; then

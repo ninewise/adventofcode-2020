@@ -1,5 +1,5 @@
 #!/bin/sh
-sed '$!{/./{H;d}};x;s/\n/ /g;s/$/ /' "$1" | #
+sed '$!{/./{H;d}};x;s/\n/ /g;s/$/ /' "$3" | #
 sed -n '/byr:/p' | #
 sed -n '/iyr:/p' | #
 sed -n '/eyr:/p' | #
