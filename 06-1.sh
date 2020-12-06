@@ -1,0 +1,2 @@
+#!/bin/sh
+sed 'H;$!{/./{d}};x;s/\n//g' "$3" | cat -n | sed 's/^ *//;s/\t/ /' | sed ':l;s/\([0-9]*\) \([a-z]\)/\1\2\n\1 /;tl' | sort -n | uniq | sed '/ /d;s/[^0-9]*//g' | uniq -c | sed 's/ [0-9]*$//' | tr -s ' \n' '+' | sed 's/^+//;s/+$/\n/' | bc
