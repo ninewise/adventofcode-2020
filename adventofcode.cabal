@@ -1,0 +1,8 @@
+name: adventofcode
+version: 0.0.1.0
+cabal-version: >= 1.10
+build-type:          Simple
+
+library
+  build-depends: containers >= 0.6 && < 0.7
+               , split >= 0.2 && < 0.3

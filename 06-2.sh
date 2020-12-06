@@ -12,4 +12,5 @@ fill() {
 		esac
 	done < "$3"
 	wc -l < "$f"
+	rm "$f"
 } | bc
