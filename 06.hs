@@ -3,7 +3,7 @@ import           Data.Set (Set, fromList, unions, intersection)
 import           Data.List.Split (splitWhen)
 
 intersections :: Ord a => [Set a] -> Set a
-intersections (s:ss) = foldl intersection s ss
+intersections = foldl1 intersection
 
 main :: IO ()
 main = do [_, part, file] <- getArgs
