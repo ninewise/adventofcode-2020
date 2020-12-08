@@ -20,7 +20,6 @@ execute() {
 
 f="$(mktemp)"
 for change in $(cat -n "$3" | grep -v 'acc' | sed 's/\t.*//'); do
-	echo "$change"
 	sed "${change}{/nop/s/nop/jmp/;/jmp/s/jmp/nop/}" "$3" > "$f"
 	if result="$(execute "$f")"; then
 		echo "$result"
