@@ -6,7 +6,7 @@ inputfile="$3"
 # create run
 if [ -f "${day}.hs" ]; then
 	stack build
-	stack ghc -- "${day}.hs" -o run
+	stack ghc -- -O3 "${day}.hs" -o run
 else
 	cp "${day}-${part}.sh" run
 fi
