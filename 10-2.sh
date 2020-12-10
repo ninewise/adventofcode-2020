@@ -14,7 +14,7 @@ run() {
 		2)
 			two="$zero"
 			zero="$(( one + zero ))"
-			one="$0"
+			one="0"
 			;;
 		1)
 			extra="$zero"
