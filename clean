@@ -3,4 +3,4 @@ day="$(printf '%02d' "$1")"
 part="$2"
 inputfile="$3"
 
-rm -f *.o *.i run
+rm -f *.o *.hi run
