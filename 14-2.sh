@@ -12,13 +12,8 @@ bin2dec() {
 	}
 }
 
-expand() {
-	sed -i '/X/{h;s/X/0/p;g;s/X/1/}' "$f"
-}
-
 f="$(mktemp)"
 mask1=0
-mask0=0
 while read -r line || [ ! -z "$line" ]; do
 	# remove masks
 	case "$line" in
