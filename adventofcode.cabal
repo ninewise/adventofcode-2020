@@ -7,3 +7,4 @@ library
   build-depends: containers >= 0.6 && < 0.7
                , split >= 0.2 && < 0.3
                , zippers >= 0.3 && < 0.4
+               , unordered-containers >= 0.2.10.0 && < 0.3

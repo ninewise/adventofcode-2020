@@ -1,29 +1,32 @@
 #!/bin/sh
 d="$(mktemp -d)"
+trap "rm -r '$d'" EXIT KILL
+
+# Prepare map
+mkfifo "$d/in"
+mkfifo "$d/out"
+./map < "$d/in" > "$d/out" &
+exec 3> "$d/in" 4< "$d/out"
 
 tr ',' '\n' < "$3" | sed '$d' | cat -n | while read i n || [ ! -z "$i" ]; do
-	echo "$i" > "$d/$n"
+	echo put "$n" "$i" >&3
 done
 
 i="$(tr ',' '\n' < "$3" | wc -l)"
+i="$(( i + 1 ))"
 spoken="$(sed 's/.*,//' "$3")"
 
-for i in $(seq "$(( i + 1 ))" 29999999); do
-	#head "$d"/* | sed '/^$/d' | sed '/=/N;s/\n//'
-	#echo "spoken=$spoken"
-	memory="$(cat "$d/$spoken" 2>/dev/null)"
-	echo "$i" > "$d/$spoken"
+while [ "$i" -lt 30000000 ]; do
+	memory="$(echo get "$spoken" >&3 && head -1 <&4)"
+	echo put "$spoken" "$i" >&3
 	if [ -z "$memory" ]; then
 		spoken=0
 	else
 		spoken="$(( i - memory ))"
 	fi
-	case "$i" in
-	*0000) printf '[%s] %d\n' "$(date)" "$i" ;;
-	esac
-	#echo "$((i + 1)) --> $spoken"
-	#sleep 5
+	if [ "$(( i % 10000 ))" -eq 0 ]; then
+		printf '[%s] %d\n' "$(date)" "$i"
+	fi
+	i="$(( i + 1 ))"
 done
-echo "$((i + 1)) --> $spoken"
-
-rm -r "$d"
+echo "$i --> $spoken"

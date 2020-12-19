@@ -9,4 +9,10 @@ if [ -f "${day}.hs" ]; then
 	stack ghc -- -O3 "${day}.hs" -o run
 else
 	cp "${day}-${part}.sh" run
+
+	# compile map if needed
+	if grep -F -q ./map run; then
+		stack build
+		stack ghc -- -O3 map.hs
+	fi
 fi
