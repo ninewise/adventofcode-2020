@@ -55,6 +55,9 @@ star p = plus p <|> pure []
 plus :: Parser a -> Parser [a]
 plus p = (:) <$> p <*> star p
 
+sepBy :: Parser a -> Parser b -> Parser [a]
+sepBy a b = (:) <$> a <*> star (b *> a)
+
 -- match a natural number
 nat :: Parser Int
 nat = read <$> plus (spot isDigit)
@@ -66,3 +69,15 @@ neg = (0-) <$> (token '-' *> nat)
 -- match an integer
 int :: Parser Int
 int = nat <|> neg
+
+newline :: Parser ()
+newline = ignore $ token '\n'
+
+space :: Parser ()
+space = ignore $ token ' '
+
+between :: Parser a -> Parser b -> Parser c -> Parser c
+between a b c = a *> c <* b
+
+parens :: Parser a -> Parser a
+parens = between (token '(') (token ')')
