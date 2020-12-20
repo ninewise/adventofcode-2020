@@ -3,13 +3,12 @@ module Parser where
 import           Control.Applicative ((<|>), Alternative(..))
 import           Data.Char (isDigit)
 import           Data.Maybe (fromJust)
+import           Data.List (find)
 
-newtype Parser a = Parser { apply :: String -> Maybe (a, String) }
+newtype Parser a = Parser { apply :: String -> [(a, String)] }
 
 parse :: Parser a -> String -> Maybe a
-parse p s = apply p s >>= uncurry complete
-  where complete x "" = Just x
-        complete _ _  = Nothing
+parse p s = fmap fst $ find (null . snd) $ apply p s
 
 parse' :: Parser a -> String -> a
 parse' p = fromJust . parse p
@@ -19,15 +18,25 @@ instance Functor Parser where
 
 instance Applicative Parser where 
   pure x  = Parser $ \s -> pure (x, s)
-  f <*> x = Parser $ \s -> case apply f s of
-    Nothing -> Nothing
-    Just (f', s') -> case apply x s' of
-      Nothing -> Nothing
-      Just (x', s'') -> pure (f' x', s'')
+  f <*> x = Parser $ \s -> do (f', s') <- apply f s
+                              (x', s'') <- apply x s'
+                              return (f' x', s'')
 
 instance Alternative Parser where
   empty   = Parser $ \s -> empty
   m <|> n = Parser $ \s -> apply m s <|> apply n s
+
+instance Monad Parser where
+  return = pure
+  x >>= f = Parser $ \s -> do (x', s') <- apply x s
+                              apply (f x') s'
+
+instance MonadFail Parser where
+  fail s = empty
+
+eof :: Parser ()
+eof = Parser $ \s -> if null s then pure ((), "")
+                               else empty
 
 ignore :: Parser a -> Parser ()
 ignore p = p *> pure ()
@@ -43,10 +52,6 @@ char = spot (const True)
 token :: Char -> Parser ()
 token c = ignore $ spot (== c)
 
-string :: String -> Parser ()
-string [] = pure ()
-string (c:cs) = token c *> string cs
-
 -- match zero or more occurrences
 star :: Parser a -> Parser [a]
 star p = plus p <|> pure []
@@ -57,6 +62,13 @@ plus p = (:) <$> p <*> star p
 
 sepBy :: Parser a -> Parser b -> Parser [a]
 sepBy a b = (:) <$> a <*> star (b *> a)
+
+list :: [Parser a] -> Parser [a]
+list [] = pure []
+list (p:ps) = (:) <$> p <*> list ps
+
+string :: String -> Parser ()
+string = ignore . list . map token
 
 -- match a natural number
 nat :: Parser Int
@@ -81,3 +93,6 @@ between a b c = a *> c <* b
 
 parens :: Parser a -> Parser a
 parens = between (token '(') (token ')')
+
+choice :: Parser a -> Parser b -> Parser (Either a b)
+choice a b = (Left <$> a) <|> (Right <$> b)
